@@ -1,0 +1,33 @@
+@prefix fno: <http://semweb.datasciencelab.be/ns/function#> .
+@prefix lib: <http://example.com/library#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+@prefix idlab-fn: <http://example.com/idlab/function/> .
+@prefix dhb: <https://dancehallbattle.org/function/> .
+
+dhb:getCountry a fno:Function ;
+  fno:name "get country IRI" ;
+  rdfs:label "get country IRI" ;
+  dcterms:description "Returns the country IRI based on 2-letter code" ;
+  fno:expects ( idlab-fn:_str ) ;
+  fno:returns ( idlab-fn:_stringOut ) ;
+  lib:providedBy [
+    lib:localLibrary "utils.jar";
+    lib:class "Utils";
+    lib:method "getCountry"
+  ].
+
+idlab-fn:_str a fno:Parameter ;
+  fno:name "input string" ;
+  rdfs:label "input string" ;
+  fno:type xsd:string ;
+  fno:predicate idlab-fn:str .
+
+idlab-fn:_stringOut a fno:Output ;
+  fno:name "output string" ;
+  rdfs:label "output string" ;
+  fno:type xsd:string ;
+  fno:predicate idlab-fn:stringOut .
