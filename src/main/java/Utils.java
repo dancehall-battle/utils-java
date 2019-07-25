@@ -1,31 +1,26 @@
-import org.apache.jena.query.ParameterizedSparqlString;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.ResourceFactory;
+import com.opencsv.CSVReader;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class Utils {
 
-    public static String getCountry(String code) {
+    private static HashMap<String, String> codes = new HashMap<>();
+
+    public static String getCountry(String code) throws IOException {
         if (code != null && !code.equals("")) {
-            ParameterizedSparqlString qs = new ParameterizedSparqlString("" +
-                    "select ?country where {\n" +
-                    "  ?country <http://www.wikidata.org/prop/direct/P297> ?code\n" +
-                    "}");
-
-            Literal codeLiteral = ResourceFactory.createPlainLiteral(code.toUpperCase());
-            qs.setParam("code", codeLiteral);
-
-            QueryExecution exec = QueryExecutionFactory.sparqlService(" https://query.wikidata.org/bigdata/namespace/wdq/sparql", qs.asQuery());
-            ResultSet results = exec.execSelect();
-
-            // At least one result, so we take that one.
-            if (results.hasNext()) {
-                return results.next().get("country").toString();
-            } else {
-                return null;
+            if (codes.isEmpty()) {
+                try (CSVReader csvReader = new CSVReader(new FileReader(Utils.class.getClassLoader().getResource("country-codes.csv").getFile()))) {
+                    String[] values = csvReader.readNext();
+                    while (values != null) {
+                        codes.put(values[1], values[0]);
+                        values = csvReader.readNext();
+                    }
+                }
             }
+
+            return codes.get(code.toUpperCase());
         } else {
             return null;
         }
